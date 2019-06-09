@@ -12,18 +12,18 @@
 @media (min-width:992px) and (min-height: 670px){
     .Burger {
         width:700px;
-        height:600px;
+        height: 500px;
     }
 }
 
-@media (min-width:460px) and (min-height: 380px){
+@media (min-width:460px) and (max-width: 991px) and (min-height: 380px){
     .Burger {
         width:400px;
         height:330px;
     }
 }
 
-@media (min-width:320px) and (min-height: 240px){
+@media (min-width:320px) and (max-width:459px) and (min-height: 240px){
     .Burger {
         width:250px;
         height:200px;

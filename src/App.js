@@ -7,7 +7,6 @@ function App() {
   return (
     <div>
       <Layout>
-        <p>test</p>
         <BurgerBuilder />
       </Layout>
     </div>
