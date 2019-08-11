@@ -20,7 +20,8 @@ class ContactData extends Component {
                 },
                 value: '',
                 validation: {
-                    required: true
+                    required: true,
+                    text: true
                 },
                 valid: false,
                 touched: false
@@ -48,7 +49,8 @@ class ContactData extends Component {
                 validation: {
                     required: true,
                     minLength: 5,
-                    maxLength: 5
+                    maxLength: 6,
+                    zipCode: true
                 },
                 valid: false,
                 touched: false
@@ -61,7 +63,8 @@ class ContactData extends Component {
                 },
                 value: '',
                 validation: {
-                    required: true
+                    required: true,
+                    text: true
                 },
                 valid: false,
                 touched: false
@@ -74,7 +77,8 @@ class ContactData extends Component {
                 },
                 value: '',
                 validation: {
-                    required: true
+                    required: true,
+                    isEmail: true
                 },
                 valid: false,
                 touched: false
@@ -108,6 +112,21 @@ class ContactData extends Component {
 
             if (rules.maxLength) {
                 isValid = value.length <= rules.maxLength && isValid;
+            }
+
+            if (rules.isEmail) {
+                const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                isValid = pattern.test(value) && isValid
+            }
+
+            if (rules.zipCode) {
+                const pattern = /\d{2}-\d{3}/;
+                isValid = pattern.test(value) && isValid
+            }
+
+            if (rules.text) {
+                const pattern = /^[a-zA-Z]+$/;
+                isValid = pattern.test(value) && isValid
             }
 
             return isValid;
