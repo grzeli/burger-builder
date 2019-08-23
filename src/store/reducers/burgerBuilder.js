@@ -1,10 +1,11 @@
 import * as actionTypes from '../actions/actionTypes';
-import { updateObject } from '../utility';
+import { updateObject } from '../../shared/utility';
 
 const initialState = {
     ingredients: null,
     totalPrice: 4,
-    error: false
+    error: false,
+    building: false
 };
 
 const INGREDIENT_PRICES= {
@@ -19,7 +20,8 @@ const addIngredient = (state, action) => {
     const updatedIngredients = updateObject(state.ingredients, updatedIngredient);
     const updatedState = {
         ingredients: updatedIngredients,
-        totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientName]
+        totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientName],
+        building: true
     }
     return updateObject(state, updatedState);
 }
@@ -29,13 +31,14 @@ const removeIngredient = (state, action) => {
     const updatedIngredients2 = updateObject(state.ingredients, updatedIngredient2);
     const updatedState2 = {
         ingredients: updatedIngredients2,
-        totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientName]
+        totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientName],
+        building: true
     }
     return updateObject(state, updatedState2);
 }
 
 const setIngredients = (state, action) => {
-    return updateObject(state, {
+    const newObj = updateObject(state, {
         ingredients: {
             salad: action.ingredients.salad,
             bacon: action.ingredients.bacon,
@@ -43,8 +46,13 @@ const setIngredients = (state, action) => {
             meat: action.ingredients.meat
         },
         totalPrice: 4,
-        error: false
+        error: false,
+        building: false
     });
+    console.log(state)
+    
+    console.log(newObj)
+    return newObj
 }
 
 const reducer = (state = initialState, action) => {

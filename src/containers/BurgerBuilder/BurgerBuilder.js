@@ -11,7 +11,7 @@ import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import * as actionTypes from '../../store/actions/index';
 
-class BurgerBuilder extends Component {
+export class BurgerBuilder extends Component {
     // constructor (props){
     //     super (props);
     //     this.state = {
@@ -77,7 +77,13 @@ class BurgerBuilder extends Component {
     // }
 
     purchaseHandler = () => {
-        this.setState({purchasing: true});
+        if (this.props.isAuth) {
+            this.setState({purchasing: true});
+        } else {
+            this.props.onSetAuthRedirectPath('/checkout')
+            this.props.history.push('/auth');
+        }
+
     }
 
     purchaseCancelHandler = () => {
@@ -124,6 +130,7 @@ class BurgerBuilder extends Component {
                         purchasable={this.updatePurchaseState(this.props.ings)}
                         price={this.props.totalPrice}
                         ordered={this.purchaseHandler}
+                        isAuth={this.props.isAuth}
                     />
                 </Aux>
             );
@@ -152,7 +159,8 @@ const mapStateToProps = state => {
     return{
         ings: state.burgerBuilder.ingredients,
         totalPrice: state.burgerBuilder.totalPrice,
-        error: state.burgerBuilder.error
+        error: state.burgerBuilder.error,
+        isAuth: state.auth.token !== null
     };
 };
 
@@ -161,7 +169,8 @@ const mapDispatchToProps = dispatch => {
         onIngredientAdded: (ingName) => dispatch(actionTypes.addIngredient(ingName)),
         onIngredientRemoved: (ingName) => dispatch(actionTypes.removeIngredient(ingName)),
         onInitIngredients: () => dispatch(actionTypes.initIngredients()),
-        onInitPurchase: () => dispatch(actionTypes.purchaseInit())
+        onInitPurchase: () => dispatch(actionTypes.purchaseInit()),
+        onSetAuthRedirectPath: (path) => dispatch(actionTypes.setAuthRedirectPath(path))
     };
 };
 

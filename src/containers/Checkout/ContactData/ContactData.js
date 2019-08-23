@@ -8,6 +8,8 @@ import axios from '../../../axios-orders';
 import Input from '../../../components/UI/Input/Input';
 import withErrorHandler from '../../../hoc//withErrorHandler/withErrorHandler';
 import * as actions from '../../../store/actions/index';
+import { updateObject, checkValidity } from '../../../shared/utility';
+
 
 class ContactData extends Component {
     state = {
@@ -99,40 +101,6 @@ class ContactData extends Component {
         formIsValid: false
     }
 
-    checkValidity(value, rules) {
-        let isValid = true;
-        if (rules) {
-            if (rules.required) {
-                isValid = value.trim() !== '' && isValid;
-            }
-
-            if (rules.minLength) {
-                isValid = value.length >= rules.minLength && isValid;
-            }
-
-            if (rules.maxLength) {
-                isValid = value.length <= rules.maxLength && isValid;
-            }
-
-            if (rules.isEmail) {
-                const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                isValid = pattern.test(value) && isValid
-            }
-
-            if (rules.zipCode) {
-                const pattern = /\d{2}-\d{3}/;
-                isValid = pattern.test(value) && isValid
-            }
-
-            if (rules.text) {
-                const pattern = /^[a-zA-Z]+$/;
-                isValid = pattern.test(value) && isValid
-            }
-
-            return isValid;
-        }
-    }
-
     orderHandler = (event) => {
         event.preventDefault();
         // alert('You can continue');
@@ -144,9 +112,10 @@ class ContactData extends Component {
         const order = {
             ingredients: this.props.ings,
             price: this.props.price,
-            orderData: formData
+            orderData: formData,
+            userId: this.props.userId
         }
-        this.props.onOrderBurger(order);
+        this.props.onOrderBurger(order, this.props.token);
         // axios.post('/orders.json', order)
         // .then(response => {
         //     this.setState({ loading: false });
@@ -157,14 +126,14 @@ class ContactData extends Component {
 
     inputChangeHandler = (event, inputIdentifier) => {
         // console.log(event.target.value)
-        const updatedOrderForm = {
-            ...this.state.orderForm
-        }
-        const updatedFormElement = {...updatedOrderForm[inputIdentifier]}
-        updatedFormElement.value = event.target.value;
-        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
-        updatedFormElement.touched = true;
-        updatedOrderForm[inputIdentifier] = updatedFormElement;
+        const updatedFormElement = updateObject(this.state.orderForm[inputIdentifier], {
+            value: event.target.value,
+            valid: checkValidity(event.target.value, this.state.orderForm[inputIdentifier].validation),
+            touched: true
+        })
+        const updatedOrderForm = updateObject(this.state.orderForm, {
+            [inputIdentifier]: updatedFormElement
+        })
 
         let formIsValid = true;
         for (let inputIdentifier in updatedOrderForm) {
@@ -216,13 +185,15 @@ const mapStateToProps = state => {
     return {
         ings: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.totalPrice,
-        loading: state.order.loading
+        loading: state.order.loading,
+        token: state.auth.token,
+        userId: state.auth.userId
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData))
+        onOrderBurger: (orderData, token) => dispatch(actions.purchaseBurger(orderData, token))
     }
 };
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(ContactData, axios));
