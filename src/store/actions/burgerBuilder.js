@@ -28,6 +28,12 @@ export const fetchIngredientsFailed = () => {
     };
 }
 
+export const saveResult = () => {
+    return {
+        type: actionTypes.FETCH_PLANETS
+    }
+}
+
 export const initIngredients = () => {
     return dispatch => {
         axios.get('https://react-my-burger-a8145.firebaseio.com/ingredients.json')
